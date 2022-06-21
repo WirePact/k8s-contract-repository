@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package wirepact.contracts;
+
+// Empty object used to return empty response
+// We don't need external google apis for one object.
+message Empty {}
+
+// Contract participant. A participant in the contract shares
+// its public key with the contract. All participants can then
+// communicate via mTLS with each other.
+message Participant {
+    // Name of the participant
+    string name = 1;
+
+    // Public key of the certificate. PEM encoded.
+    bytes public_key = 2;
+
+    // SHA-256 hash of the public key. Read Only Field. Used for
+    // searching participants.
+    string hash = 3;
+}
+
+// Contract between multiple participants in the WirePact network.
+// A participant can have multiple contracts. Contracts allow
+// mTLS connections between all participants.
+message Contract {
+    // The ID of the contract, this is a hash of all participants
+    // public keys.
+    string id = 1;
+
+    // List of participants in the contract.
+    repeated Participant participants = 2;
+}
+
+// Service for managing contracts. Allows creation and deletion
+// of contracts as well as "listing" with query options.
+// Note that all calls are not authorized.
+service ContractsService {
+    // List all contracts available in the repository.
+    rpc List(ListRequest) returns (ListResponse);
+    
+    // Create a new contract between multiple parties.
+    rpc Create(CreateRequest) returns (Contract);
+    
+    // Delete a specific contract.
+    rpc Delete(DeleteRequest) returns (Empty);
+    
+    // Create a certificate for a participant that contains all public
+    // keys of all contracts that the participant is involved in.
+    rpc GetCertificates(GetCertificatesRequest) returns (GetCertificatesResponse);
+}
+
+// Empty request object. In the future, this object may support filtering
+// the contracts.
+message ListRequest {}
+
+message ListResponse {
+    // List of contracts in the repository.
+    repeated Contract contracts = 1;
+}
+
+message CreateRequest {
+    // Map of participants. Maps the name of a participant
+    // to its public certificate key.
+    map<string, bytes> participants = 1;
+}
+
+message DeleteRequest {
+    // ID of the contract to delete.
+    string id = 1;
+}
+
+message GetCertificatesRequest {
+    // Participants public key to get certificates for.
+    bytes public_key = 1;
+}
+
+message GetCertificatesResponse {
+    // PEM encoded certificates (public keys) of all participants
+    // that the given public key is involved in.
+    repeated bytes certificates = 1;
+}

@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "wirepact.contracts.ContractsService.Delete"
+  },
+  "requests": [
+    {
+      "location": "Delete A - C-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}
