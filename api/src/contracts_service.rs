@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use log::debug;
-use openssl::x509::X509;
 use tonic::{Request, Response, Status};
 
 use crate::storage::{Storage, StorageError};

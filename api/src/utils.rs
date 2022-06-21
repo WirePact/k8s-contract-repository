@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, HashMap};
 
-use openssl::{hash::MessageDigest, stack::Stack, x509::X509};
+use openssl::{hash::MessageDigest, x509::X509};
 use sha2::{Digest, Sha256};
 
 use crate::grpc::contracts::{Contract, Participant};
@@ -32,7 +32,7 @@ pub(crate) fn participants_to_contract(
     Ok(contract)
 }
 
-pub(crate) fn participant_hash(public_key: &Vec<u8>) -> Result<String, Box<dyn std::error::Error>> {
+pub(crate) fn participant_hash(public_key: &[u8]) -> Result<String, Box<dyn std::error::Error>> {
     let cert = X509::from_pem(public_key)?;
     let hash = cert.digest(MessageDigest::sha256())?;
     Ok(hex::encode(hash))
