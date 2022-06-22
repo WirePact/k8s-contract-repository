@@ -12,7 +12,6 @@ mod kubernetes;
 mod local;
 
 custom_error! {pub(crate) StorageError
-    Unknown = "Unknown Storage Error",
     NotFound{id: String} = "Contract with id '{id}' not found",
     ContractAlreadyExists{id: String} = "Contract with id '{id}' already exists",
     CouldNotCreate{err: String} = "Could not create storage adapter: {err}",
@@ -66,7 +65,8 @@ pub(crate) async fn create_storage(
         }
         StorageAdapter::Kubernetes => {
             info!("Create Kubernetes storage adapter.");
-            Ok(Arc::new(kubernetes::KubernetesStorage {}))
+            let storage = kubernetes::KubernetesStorage::new().await?;
+            Ok(Arc::new(storage))
         }
     }
 }
