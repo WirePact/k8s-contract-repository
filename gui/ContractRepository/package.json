@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "style:build": "npx tailwind build -i ./wwwroot/css/styles.css -o ./wwwroot/css/site.css",
+    "style:build:watch": "npx tailwind build -w -i ./wwwroot/css/styles.css -o ./wwwroot/css/site.css"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.4"
+  }
+}

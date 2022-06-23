@@ -1,0 +1,33 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  lint_and_test:
+    name: Linting and Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+https://github.com/marketplace/actions/setup-minikube-kubernetes-cluster
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features --no-deps
+          name: Lint Results
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --check
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: check
