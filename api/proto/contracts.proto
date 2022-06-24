@@ -40,6 +40,9 @@ service ContractsService {
     // List all contracts available in the repository.
     rpc List(ListRequest) returns (ListResponse);
     
+    // Fetch a specific contract from the repository.
+    rpc Get(GetRequest) returns (Contract);
+
     // Create a new contract between multiple parties.
     rpc Create(CreateRequest) returns (Contract);
     
@@ -58,6 +61,11 @@ message ListRequest {}
 message ListResponse {
     // List of contracts in the repository.
     repeated Contract contracts = 1;
+}
+
+message GetRequest {
+    // The ID of the contract.
+    string id = 1;
 }
 
 message CreateRequest {

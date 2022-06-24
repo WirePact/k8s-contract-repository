@@ -55,6 +55,32 @@ impl Storage for LocalStorage {
         Ok(contracts)
     }
 
+    async fn get(&self, id: &str) -> Result<Contract, StorageError> {
+        let mut entries = read_dir(LOCAL_CONTRACTS_PATH)
+            .await
+            .map_err(|e| StorageError::StorageIO { err: e.to_string() })?;
+
+        while let Some(entry) = entries
+            .next_entry()
+            .await
+            .map_err(|e| StorageError::StorageIO { err: e.to_string() })?
+        {
+            let contract_id = entry.file_name().to_string_lossy().replace(".contract", "");
+            if contract_id == id {
+                info!("Fetch contract with id '{}'.", id);
+                let data = read(entry.path())
+                    .await
+                    .map_err(|e| StorageError::StorageIO { err: e.to_string() })?;
+                let contract = Contract::decode(&data[..])
+                    .map_err(|e| StorageError::Conversion { err: e.to_string() })?;
+                return Ok(contract);
+            }
+        }
+
+        warn!("No contract with id '{}' found.", id);
+        Err(StorageError::NotFound { id: id.to_string() })
+    }
+
     async fn create_contract(
         &self,
         participants: &HashMap<String, Vec<u8>>,
@@ -159,6 +185,27 @@ mod tests {
 
         storage.create_contract(&get_pkis()).await.unwrap();
         assert!(storage.create_contract(&get_pkis()).await.is_err());
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn fetch_single_contract() {
+        clean_up().unwrap();
+        let storage = LocalStorage::new().await.unwrap();
+
+        let contract = storage.create_contract(&get_pkis()).await.unwrap();
+        let contract = storage.get(&contract.id).await.unwrap();
+        assert_eq!(contract.id, A_B_ID);
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn throw_on_not_found_single_contract() {
+        clean_up().unwrap();
+        let storage = LocalStorage::new().await.unwrap();
+
+        let result = storage.get(A_B_ID).await;
+        assert!(result.is_err());
     }
 
     #[tokio::test]

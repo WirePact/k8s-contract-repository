@@ -2,7 +2,7 @@ use k8s_openapi::api::core::v1::Secret;
 use k8s_openapi::ByteString;
 use kube::api::{DeleteParams, PostParams};
 use kube::{api::ListParams, config::Kubeconfig, Api, Client};
-use log::info;
+use log::{info, warn};
 use prost::Message;
 use tokio::fs::read_to_string;
 
@@ -106,6 +106,30 @@ impl Storage for KubernetesStorage {
                     .map_err(|e| StorageError::Conversion { err: e.to_string() })
             })
             .collect()
+    }
+
+    async fn get(&self, id: &str) -> Result<Contract, StorageError> {
+        if !self.contract_exists(id).await? {
+            warn!("No contract with id '{}' found.", id);
+            return Err(StorageError::NotFound { id: id.to_string() });
+        }
+
+        let secret = self
+            .secrets_api
+            .get(id)
+            .await
+            .map_err(|e| StorageError::StorageIO { err: e.to_string() })?;
+
+        let default = BTreeMap::new();
+        let data = secret.data.as_ref().unwrap_or(&default).get("contract");
+
+        match data {
+            Some(data) => Contract::decode(data.0.as_slice())
+                .map_err(|e| StorageError::Conversion { err: e.to_string() }),
+            None => Err(StorageError::Conversion {
+                err: "No contract data field available in Secret.".to_string(),
+            }),
+        }
     }
 
     async fn create_contract(
@@ -222,6 +246,27 @@ mod tests {
 
         storage.create_contract(&get_pkis()).await.unwrap();
         assert!(storage.create_contract(&get_pkis()).await.is_err());
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn fetch_single_contract() {
+        clean_up().await.unwrap();
+        let storage = KubernetesStorage::new().await.unwrap();
+
+        let contract = storage.create_contract(&get_pkis()).await.unwrap();
+        let contract = storage.get(&contract.id).await.unwrap();
+        assert_eq!(contract.id, A_B_ID);
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn throw_on_not_found_single_contract() {
+        clean_up().await.unwrap();
+        let storage = KubernetesStorage::new().await.unwrap();
+
+        let result = storage.get(A_B_ID).await;
+        assert!(result.is_err());
     }
 
     #[tokio::test]

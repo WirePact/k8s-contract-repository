@@ -24,6 +24,9 @@ pub(crate) trait Storage: Send + Sync {
     /// Return a list of all contracts in the storage.
     async fn all(&self) -> Result<Vec<Contract>, StorageError>;
 
+    /// Fetch a specific contract from the storage.
+    async fn get(&self, id: &str) -> Result<Contract, StorageError>;
+
     /// Create a new contract with the given participants.
     /// The participants map is a hash map where the keys are the "names" of
     /// participants and the values are the public keys of the certificates.

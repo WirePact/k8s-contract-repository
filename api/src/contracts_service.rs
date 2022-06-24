@@ -3,6 +3,7 @@ use std::sync::Arc;
 use log::debug;
 use tonic::{Request, Response, Status};
 
+use crate::grpc::contracts::GetRequest;
 use crate::storage::{Storage, StorageError};
 
 use crate::grpc::contracts::{
@@ -34,6 +35,18 @@ impl crate::grpc::contracts::contracts_service_server::ContractsService for Cont
             .map_err(|e| Status::internal(format!("Internal server error: {}", e)))?;
 
         Ok(Response::new(ListResponse { contracts }))
+    }
+
+    async fn get(&self, request: Request<GetRequest>) -> Result<Response<Contract>, Status> {
+        let id = request.into_inner().id;
+        debug!("Fetch contract with id {} for client", &id);
+        let contract = self
+            .storage
+            .get(&id)
+            .await
+            .map_err(|e| Status::internal(format!("Internal server error: {}", e)))?;
+
+        Ok(Response::new(contract))
     }
 
     async fn create(&self, request: Request<CreateRequest>) -> Result<Response<Contract>, Status> {
