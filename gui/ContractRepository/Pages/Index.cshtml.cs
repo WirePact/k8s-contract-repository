@@ -1,12 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Wirepact.Contracts;
 
 namespace ContractRepository.Pages;
 
-[Authorize("web-gui-auth")]
+[Authorize]
 public class Index : PageModel
 {
-    public void OnGet()
+    private readonly ContractsService.ContractsServiceClient _client;
+
+    public Index(ContractsService.ContractsServiceClient client)
     {
+        _client = client;
+    }
+
+    public List<Contract> Contracts { get; set; } = new();
+
+    public async Task OnGetAsync()
+    {
+        Contracts = (await _client.ListAsync(new())).Contracts.OrderBy(c => c.Id).ToList();
     }
 }

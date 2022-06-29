@@ -3,6 +3,7 @@ use std::sync::Arc;
 use log::debug;
 use tonic::{Request, Response, Status};
 
+use crate::grpc::contracts::get_certificates_request::ParticipantIdentifier;
 use crate::grpc::contracts::GetRequest;
 use crate::storage::{Storage, StorageError};
 
@@ -86,9 +87,19 @@ impl crate::grpc::contracts::contracts_service_server::ContractsService for Cont
         request: Request<GetCertificatesRequest>,
     ) -> Result<Response<GetCertificatesResponse>, Status> {
         debug!("Create Certificate Chain for client.");
-        let participant_hash = participant_hash(&request.into_inner().public_key).map_err(|e| {
-            Status::failed_precondition(format!("Provided public key is not valid: {}", e))
-        })?;
+        let request = request.into_inner();
+        let participant_hash = match request.participant_identifier {
+            None => {
+                return Err(Status::failed_precondition(
+                    "no participant_identifier given",
+                ))
+            }
+            Some(ParticipantIdentifier::Hash(h)) => h,
+            Some(ParticipantIdentifier::PublicKey(key)) => participant_hash(&key).map_err(|e| {
+                Status::failed_precondition(format!("Provided public key is not valid: {}", e))
+            })?,
+        };
+
         let certificates = self
             .storage
             .involved_participants(&participant_hash)

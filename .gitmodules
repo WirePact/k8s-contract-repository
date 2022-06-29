@@ -1,0 +1,3 @@
+[submodule "gui/external/wirepact-k8s-pki"]
+	path = gui/external/wirepact-k8s-pki
+	url = git@github.com:WirePact/k8s-pki.git

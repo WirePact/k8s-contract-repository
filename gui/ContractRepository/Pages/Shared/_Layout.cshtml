@@ -5,17 +5,17 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <link rel="stylesheet" href="~/css/site.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <base href="~/">
 </head>
 
 <body class="font-sans text-base text-gray-900">
-<header class="bg-blue-600 text-gray-100 font-bold py-4 px-8 mb-8">
-    <div>WirePact Contract Repository</div>
-</header>
+<partial name="Components/_Header"/>
 
-<main class="w-full px-2 sm:px-0 sm:w-auto max-w-4xl mx-auto mb-16">
+<main class="w-full mt-8 max-w-4xl mx-auto mb-16">
     @RenderBody()
 </main>
 
+<script src="~/_framework/blazor.server.js" asp-append-version="true" async defer></script>
 </body>
 </html>

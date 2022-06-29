@@ -1,74 +1,86 @@
-using McMaster.Extensions.CommandLineUtils;
+using AspNetCore.Authentication.Basic;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Wirepact.Contracts;
 
-var cmdApp = new CommandLineApplication();
-
-cmdApp.HelpOption();
-var auth = cmdApp.Option<Authentication>("-a|--auth <METHOD>", "Authentication method for web GUI",
-    CommandOptionType.SingleValue);
-auth.DefaultValue = Authentication.None;
-var port = cmdApp.Option<short>("-p|--port <PORT>", "Port for web GUI",
-    CommandOptionType.SingleValue);
-port.DefaultValue = 8080;
-
-cmdApp.OnExecuteAsync(async _ =>
+if (!EnvSet("AUTH_USER"))
 {
-    switch (auth.ParsedValue)
-    {
-        // Check for authentication and the required env vars.
-        case Authentication.Basic when !EnvSet("BASIC_USER") || !EnvSet("BASIC_PASS"):
-            throw new Exception(
-                "Basic authentication is enabled but the required env vars (BASIC_USER, BASIC_PASS) are not set.");
-        case Authentication.Oidc when !EnvSet("OIDC_CLIENT_ID") || !EnvSet("OIDC_ISSUER"):
-            throw new Exception(
-                "OIDC authentication is enabled but the required env vars (OIDC_CLIENT_ID, OIDC_ISSUER) are not set.");
-    }
+    throw new Exception("AUTH_USER environment variable must be set");
+}
 
-    var builder = WebApplication.CreateBuilder(args);
-    builder.WebHost.ConfigureKestrel(s =>
+if (!EnvSet("AUTH_PASS"))
+{
+    throw new Exception("AUTH_PASS environment variable must be set");
+}
+
+if (!EnvSet("REPO_URI"))
+{
+    throw new Exception("REPO_URI environment variable must be set");
+}
+
+if (!short.TryParse(Environment.GetEnvironmentVariable("PORT") ?? "8080", out var port))
+{
+    port = 8080;
+}
+
+var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.ConfigureKestrel(s =>
+{
+    s.ListenAnyIP(port, o =>
     {
-        s.ListenAnyIP(port.ParsedValue, o =>
-        {
-            o.Protocols = HttpProtocols.Http1AndHttp2;
+        o.Protocols = HttpProtocols.Http1AndHttp2;
 #if DEBUG
-            o.UseHttps();
+        o.UseHttps();
 #endif
-        });
     });
-
-    var services = builder.Services;
-    services.AddHealthChecks();
-    services.AddRazorPages()
-#if DEBUG
-        .AddRazorRuntimeCompilation()
-#endif
-        ;
-    services
-        .AddAuthorization(o =>
-        {
-            // o.AddPolicy("web-gui-auth", b =>
-            // {
-            //     if (auth.ParsedValue == Authentication.None)
-            //     {
-            //         return;
-            //     }
-            // });
-        })
-        .AddAuthentication();
-
-    var webapp = builder.Build();
-    webapp.MapRazorPages();
-    webapp.UseStaticFiles();
-    await webapp.RunAsync();
 });
 
-return await cmdApp.ExecuteAsync(args);
+var services = builder.Services;
+services.AddHealthChecks();
+services.AddRouting(o => o.LowercaseUrls = true);
+services.AddRazorPages()
+#if DEBUG
+    .AddRazorRuntimeCompilation()
+#endif
+    ;
+services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+services.AddScoped<IUrlHelper>(factory =>
+{
+    var actionContext = factory
+        .GetRequiredService<IActionContextAccessor>()
+        .ActionContext;
+    return new UrlHelper(actionContext ?? new ActionContext());
+});
+services.AddServerSideBlazor();
+services.AddSignalR(e => e.MaximumReceiveMessageSize = 1024 * 1024);
+services
+    .AddAuthorization()
+    .AddAuthentication(BasicDefaults.AuthenticationScheme)
+    .AddBasic<BasicUserValidation>(o => o.Realm = "WirePact Contract Repository");
+services.AddGrpcClient<ContractsService.ContractsServiceClient>(o =>
+    o.Address = new Uri(Environment.GetEnvironmentVariable("REPO_URI") ?? ""));
+
+var webapp = builder.Build();
+webapp.UseStaticFiles();
+webapp.UseRouting();
+webapp.UseAuthentication();
+webapp.UseAuthorization();
+webapp.MapRazorPages();
+webapp.MapBlazorHub(
+    o =>
+    {
+        o.ApplicationMaxBufferSize = 1024 * 1024;
+        o.TransportMaxBufferSize = 1024 * 1024;
+    });
+await webapp.RunAsync();
 
 bool EnvSet(string name) => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(name));
 
-internal enum Authentication
+internal class BasicUserValidation : IBasicUserValidationService
 {
-    None,
-    Basic,
-    Oidc,
+    public Task<bool> IsValidAsync(string username, string password) => Task.FromResult(
+        username == Environment.GetEnvironmentVariable("AUTH_USER") &&
+        password == Environment.GetEnvironmentVariable("AUTH_PASS"));
 }

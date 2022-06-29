@@ -80,8 +80,15 @@ message DeleteRequest {
 }
 
 message GetCertificatesRequest {
-    // Participants public key to get certificates for.
-    bytes public_key = 1;
+    // Identifier of the participant. Can be the public key of the certificate
+    // or the certificate digest (fingerprint, SHA-256 hash).
+    oneof participant_identifier {
+        // Certificate public key of the participant.
+        bytes public_key = 1;
+
+        // The certificate digest (SHA-256 hash) of the participant.
+        string hash = 2;
+    }
 }
 
 message GetCertificatesResponse {

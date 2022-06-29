@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "style:build": "npx tailwind build -i ./wwwroot/css/styles.css -o ./wwwroot/css/site.css",
+    "style:build": "npx tailwind build -i ./wwwroot/css/styles.css -o ./wwwroot/css/site.css --minify",
     "style:build:watch": "npx tailwind build -w -i ./wwwroot/css/styles.css -o ./wwwroot/css/site.css"
   },
   "devDependencies": {
