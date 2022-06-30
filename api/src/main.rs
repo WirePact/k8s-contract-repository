@@ -58,7 +58,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let storage = create_storage(cli.storage).await?;
 
     Server::builder()
-        .add_service(ContractsService::grpc_service(storage))
+        .accept_http1(true)
+        .add_service(tonic_web::enable(ContractsService::grpc_service(storage)))
         .serve_with_shutdown(address.parse()?, signal())
         .await?;
 
