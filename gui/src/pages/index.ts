@@ -14,11 +14,12 @@ export class Index extends BaseElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this._fetchData();
+    this.fetchData();
   }
 
   protected render() {
-    return html`<div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between mb-8">
+    return html`
+      <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between mb-8">
         <h3 class="text-lg leading-6 font-medium">Available Contracts</h3>
         <div class="mt-3 sm:mt-0 sm:ml-4">
           <a
@@ -55,10 +56,11 @@ export class Index extends BaseElement {
             )}
           </tbody>
         </table>
-      </div>`;
+      </div>
+    `;
   }
 
-  private async _fetchData(): Promise<void> {
+  private async fetchData(): Promise<void> {
     const { contracts } = await this.client.list({});
     this.contracts = contracts;
   }

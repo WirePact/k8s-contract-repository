@@ -1,12 +1,12 @@
 import { Route, Router } from '@vaadin/router';
 import './app';
-import './components/back';
-import './components/header';
-import './components/loading-spinner';
-import './components/participant-card';
-import './pages/detail';
-import './pages/index';
-import './pages/new';
+
+function requireAll(r: any) {
+  r.keys().forEach(r);
+}
+requireAll((require as any).context('./components/', true, /\.ts$/));
+requireAll((require as any).context('./pages/', true, /\.ts$/));
+
 import './styles.css';
 
 const routes: Route[] = [
