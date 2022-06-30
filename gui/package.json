@@ -1,0 +1,43 @@
+{
+  "name": "contract-repo-gui",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "dev": "webpack serve --mode development",
+    "prebuild": "npm run grpc",
+    "build": "webpack --mode production",
+    "pregrpc": "del-cli src/grpc/generated && make-dir src/grpc/generated",
+    "grpc": "grpc_tools_node_protoc --ts_proto_out=src/grpc/generated --ts_proto_opt=env=browser,outputServices=nice-grpc,outputServices=generic-definitions,outputJsonMethods=false,useExactTypes=false -I=external/wirepact-k8s-pki/proto -I=../api/proto ../api/proto/contracts.proto external/wirepact-k8s-pki/proto/pki.proto"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@vaadin/router": "^1.7.4",
+    "lit": "^2.2.6",
+    "long": "^5.2.0",
+    "nice-grpc-common": "^1.1.0",
+    "nice-grpc-web": "^1.1.0",
+    "protobufjs": "^6.11.3",
+    "tailwindcss": "^3.1.4"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.7",
+    "css-loader": "^6.7.1",
+    "del-cli": "^4.0.1",
+    "eslint": "^8.18.0",
+    "file-loader": "^6.2.0",
+    "grpc-tools": "^1.11.2",
+    "html-webpack-plugin": "^5.5.0",
+    "lit-analyzer": "^2.0.0-pre.2",
+    "make-dir-cli": "^3.0.0",
+    "mini-css-extract-plugin": "^2.6.1",
+    "postcss-loader": "^7.0.0",
+    "prettier": "^2.7.1",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.3.1",
+    "ts-proto": "^1.115.5",
+    "typescript": "^4.7.4",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.2"
+  }
+}
