@@ -29,7 +29,7 @@ export class Modal extends BaseElement {
         >
           <div
             class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0"
-            @click=${() => this.dispatchEvent(new CustomEvent('close', { detail: null }))}
+            @click=${() => this.dispatchEvent(new CustomEvent('close'))}
           >
             <div
               class="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm sm:w-full sm:p-6"
@@ -44,16 +44,49 @@ export class Modal extends BaseElement {
   }
 }
 
-@customElement('app-delete-confirm-modal')
-export class DeleteConfirmModal extends BaseElement {
+@customElement('app-confirm-modal')
+export class ConfirmModal extends BaseElement {
+  @property({ type: Boolean })
+  public show = false;
+
+  @property({ type: Boolean })
+  public destructive = false;
+
+  private get buttonColor() {
+    return this.destructive
+      ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+      : 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500';
+  }
+
   protected render() {
-    return html` <app-modal> DELETE </app-modal> `;
+    return html`
+      <app-modal .show=${this.show} @close=${() => this.dispatchEvent(new CustomEvent('close', { detail: false }))}>
+        <slot></slot>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse -mx-6 -mb-6 mt-6">
+          <button
+            type="button"
+            @click=${() => this.dispatchEvent(new CustomEvent('close', { detail: true }))}
+            class="${this
+              .buttonColor} w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            ${this.destructive ? 'Delete' : 'Confirm'}
+          </button>
+          <button
+            type="button"
+            @click=${() => this.dispatchEvent(new CustomEvent('close', { detail: false }))}
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            Cancel
+          </button>
+        </div>
+      </app-modal>
+    `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
     'app-modal': Modal;
-    'app-delete-confirm-modal': DeleteConfirmModal;
+    'app-confirm-modal': ConfirmModal;
   }
 }

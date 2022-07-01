@@ -55,7 +55,7 @@ const config = {
     proxy: [
       {
         context: (path) => path.startsWith('/wirepact.contracts'),
-        target: 'http://localhost:8081',
+        target: process.env.REPO_HOST ?? 'http://localhost:8081',
       },
     ],
   },

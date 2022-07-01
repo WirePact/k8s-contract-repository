@@ -1,6 +1,7 @@
-import { RouterLocation } from '@vaadin/router';
+import { Router, RouterLocation } from '@vaadin/router';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { router } from '..';
 import { BaseElement } from '../base-element';
 import { contractsClient } from '../grpc/clients';
 import { Contract } from '../grpc/generated/contracts';
@@ -8,7 +9,7 @@ import { Contract } from '../grpc/generated/contracts';
 @customElement('page-detail')
 export class Detail extends BaseElement {
   @property({ type: Object })
-  private contract?: Contract;
+  public contract?: Contract;
 
   @property({ type: Object })
   private location!: RouterLocation;
@@ -43,25 +44,43 @@ export class Detail extends BaseElement {
         </div>
       </div>
       ${this.contract
-        ? this.contract.participants.map(
-            (participant) =>
-              html`<app-participant-card class="block mb-8" .participant=${participant}></app-participant-card>`
-          )
+        ? this.contract.participants
+            .sort(({ name: left }, { name: right }) => left.localeCompare(right))
+            .map(
+              (participant) =>
+                html`<app-participant-card class="block mb-8" .participant=${participant}></app-participant-card>`
+            )
         : html`<div class="text-center"><app-spinner></app-spinner></div>`}
-      <div>${this.showDeleteDialog}</div>
-      <app-modal
+      <app-confirm-modal
         .show=${this.showDeleteDialog}
-        @close=${(e: any) => {
-          console.log(e);
+        .destructive=${true}
+        @close=${(e: CustomEvent<boolean>) => {
           this.showDeleteDialog = false;
+          if (!e.detail) {
+            return;
+          }
+
+          this.deleteContract();
         }}
-        >TEST</app-modal
       >
+        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Delete Contract</h3>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500">
+            Are you sure you want to delete the contract (ID:
+            <span class="font-mono break-all">${this.contractId}</span>)?
+          </p>
+        </div>
+      </app-confirm-modal>
     `;
   }
 
   private async fetchData(): Promise<void> {
     this.contract = await this.client.get({ id: this.contractId });
+  }
+
+  private async deleteContract(): Promise<void> {
+    await this.client.delete({ id: this.contractId });
+    Router.go(router.urlForName('home'));
   }
 }
 
