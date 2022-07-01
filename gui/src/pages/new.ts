@@ -1,12 +1,18 @@
+import { Router } from '@vaadin/router';
 import { html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { router } from '..';
 import { BaseElement } from '../base-element';
+import { contractsClient } from '../grpc/clients';
 import { Participant } from '../grpc/generated/contracts';
 
 @customElement('page-new')
 export class New extends BaseElement {
   @state()
   private participants: Participant[] = [];
+
+  @state()
+  private showLoadCertModal = false;
 
   protected render() {
     return html`
@@ -24,6 +30,7 @@ export class New extends BaseElement {
         </button>
         <button
           type="button"
+          @click=${() => (this.showLoadCertModal = true)}
           class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Add PKI via API
@@ -47,11 +54,21 @@ export class New extends BaseElement {
           type="button"
           .disabled=${this.participants.length < 2 ||
           this.participants.some((p) => p.name.length === 0 || p.publicKey.length === 0)}
+          @click=${() => this.saveContract()}
           class="inline-flex transition-colors items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-400"
         >
           Save
         </button>
       </div>
+      <app-load-cert-modal
+        .show=${this.showLoadCertModal}
+        @close=${(e: CustomEvent<string | undefined>) => {
+          this.showLoadCertModal = false;
+          if (e.detail) {
+            this.addParticipant(e.detail);
+          }
+        }}
+      ></app-load-cert-modal>
     `;
   }
 
@@ -66,6 +83,14 @@ export class New extends BaseElement {
 
   private removeParticipant(index: number) {
     this.participants = [...this.participants.slice(0, index), ...this.participants.slice(index + 1)];
+  }
+
+  private async saveContract() {
+    const client = contractsClient();
+    await client.create({
+      participants: this.participants.reduce((acc, p) => ({ ...acc, [p.name]: p.publicKey }), {}),
+    });
+    Router.go(router.urlForName('home'));
   }
 }
 
