@@ -107,12 +107,15 @@ export class LoadCertificateModal extends BaseElement {
     return html`
       <app-modal .show=${this.show} @close=${() => this.dispatchEvent(new CustomEvent('close'))}>
         <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Fetch Certificate from PKI</h3>
-        <div class="mt-2">
-          <p class="text-sm text-gray-500">
-            Please fill the PKI host (e.g. http://foobar.com) and the optional API key of the PKI you want to fetch the
-            certificate for. <span class="font-bold">NOTE:</span> the PKI must be publicly accessible.
-          </p>
-        </div>
+        <p class="text-sm text-gray-500 mt-2">
+          Please fill the PKI host (e.g. http://foobar.com) and the optional API key of the PKI you want to fetch the
+          certificate for. <span class="font-bold">NOTE:</span> the PKI must be publicly accessible.
+        </p>
+        <p class="text-sm text-gray-500 mt-2">
+          If you have configured the "DNS_SERVER" env-variable for the frontend (or some system that uses resolv.conf files
+          like Docker), you may also try to proxy the request through NGINX. Use "/http_proxy/HOST:PORT" or
+          "/https_proxy/HOST:PORT" as PKI host.
+        </p>
         <div class="mt-2">
           <app-form-input
             label="PKI Host*"
