@@ -18,7 +18,7 @@
         "dockerProject": "wirepact/contract-api",
         "dockerLogin": false,
         "dockerContext": "./api",
-        "dockerFile": "./Dockerfile",
+        "dockerFile": "./api/Dockerfile",
         "dockerTags": ["{{major}}.{{minor}}.{{patch}}", "{{major}}.{{minor}}", "{{major}}-latest", "{{git_sha}}", "latest"],
         "dockerArgs": {
           "BUILD_VERSION": "{{major}}.{{minor}}.{{patch}}",
