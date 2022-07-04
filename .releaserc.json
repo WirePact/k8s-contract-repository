@@ -15,7 +15,7 @@
       {
         "dockerImage": "contract-api",
         "dockerRegistry": "ghcr.io",
-        "dockerProject": "wirepact/contract-api",
+        "dockerProject": "wirepact",
         "dockerLogin": false,
         "dockerContext": "./api",
         "dockerFile": "./api/Dockerfile",
@@ -31,7 +31,7 @@
       {
         "dockerImage": "contract-gui",
         "dockerRegistry": "ghcr.io",
-        "dockerProject": "wirepact/contract-gui",
+        "dockerProject": "wirepact",
         "dockerLogin": false,
         "dockerContext": ".",
         "dockerFile": "./gui/Dockerfile",
