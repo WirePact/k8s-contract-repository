@@ -255,6 +255,6 @@ mod tests {
             .involved_participants(&participant_hash(&base64::decode(PKI_A_KEY).unwrap()).unwrap())
             .await
             .unwrap();
-        assert_eq!(result.len(), 2);
+        assert_eq!(result.len(), 1);
     }
 }

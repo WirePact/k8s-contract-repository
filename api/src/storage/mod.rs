@@ -52,6 +52,7 @@ pub(crate) trait Storage: Send + Sync {
             .filter(|c| c.participants.iter().any(|p| p.hash == participant_hash))
             .flat_map(|c| &c.participants)
             .unique_by(|p| &p.hash)
+            .filter(|p| p.hash != participant_hash)
             .cloned()
             .collect::<Vec<Participant>>())
     }
