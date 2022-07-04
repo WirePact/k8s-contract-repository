@@ -1,0 +1,65 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  api:
+    name: Linting and Testing API
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Setup Minikube
+        uses: manusa/actions-setup-minikube@v2.6.0
+        with:
+          minikube version: v1.25.1
+          kubernetes version: v1.24.0
+          github token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+
+      - run: cargo install cargo-audit
+
+      - name: Check Formatting
+        run: cargo fmt --check
+
+      - name: Lint
+        run: cargo clippy --all-features --no-deps
+
+      - name: Security Check
+        run: cargo audit
+
+      - name: Run Tests
+        run: cargo test
+
+  gui:
+    name: Linting and Testing GUI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gui
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test Build
+        run: npm run grpc && npm run build

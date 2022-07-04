@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "wirepact.contracts.ContractsService.GetCertificates"
+  },
+  "requests": [
+    {
+      "location": "Get Certs for PKI_A with Hash-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

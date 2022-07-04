@@ -1,0 +1,46 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/github",
+      {
+        "successComment": false,
+        "failComment": false
+      }
+    ],
+    [
+      "@codedependant/semantic-release-docker",
+      {
+        "dockerImage": "contract-api",
+        "dockerRegistry": "ghcr.io",
+        "dockerProject": "wirepact/contract-api",
+        "dockerLogin": false,
+        "dockerContext": "./api",
+        "dockerFile": "./Dockerfile",
+        "dockerTags": ["{{major}}.{{minor}}.{{patch}}", "{{major}}.{{minor}}", "{{major}}-latest", "{{git_sha}}", "latest"],
+        "dockerArgs": {
+          "BUILD_VERSION": "{{major}}.{{minor}}.{{patch}}",
+          "COMMIT_SHA": "{{git_sha}}"
+        }
+      }
+    ],
+    [
+      "@codedependant/semantic-release-docker",
+      {
+        "dockerImage": "contract-gui",
+        "dockerRegistry": "ghcr.io",
+        "dockerProject": "wirepact/contract-gui",
+        "dockerLogin": false,
+        "dockerContext": ".",
+        "dockerFile": "./gui/Dockerfile",
+        "dockerTags": ["{{major}}.{{minor}}.{{patch}}", "{{major}}.{{minor}}", "{{major}}-latest", "{{git_sha}}", "latest"],
+        "dockerArgs": {
+          "BUILD_VERSION": "{{major}}.{{minor}}.{{patch}}",
+          "COMMIT_SHA": "{{git_sha}}"
+        }
+      }
+    ]
+  ]
+}

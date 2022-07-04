@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "wirepact.contracts.ContractsService.Get"
+  },
+  "requests": [
+    {
+      "location": "Get Specific Contract-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

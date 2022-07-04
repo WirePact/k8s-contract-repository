@@ -1,0 +1,8 @@
+api/target/
+api/tmp/
+api/data/
+api/Dockerfile
+
+gui/node_modules/
+gui/external/wirepact-k8s-pki/external/
+gui/Dockerfile

@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: ../api
+    environment:
+      - DEBUG=true
+      - PORT=8081
+    ports:
+      - 8081:8081
+  pki_a:
+    image: ghcr.io/wirepact/k8s-pki:2.3.0
+    environment:
+      - DEBUG=true
+      - PORT=8082
+      - LOCAL=true
+      - API_KEY=pki_a
+    ports:
+      - 8082:8082
+  pki_b:
+    image: ghcr.io/wirepact/k8s-pki:2.3.0
+    environment:
+      - DEBUG=true
+      - PORT=8083
+      - LOCAL=true
+      - API_KEY=pki_b
+    ports:
+      - 8083:8083
