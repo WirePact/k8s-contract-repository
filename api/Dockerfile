@@ -18,16 +18,15 @@ FROM alpine:3.16
 ARG BUILD_VERSION=0.0.0-development
 ARG COMMIT_SHA=NOT_AVAILABLE
 
-# LABEL org.opencontainers.image.source="https://github.com/WirePact/k8s-pki" \
-#     org.opencontainers.image.authors="cbuehler@rootd.ch" \
-#     org.opencontainers.image.url="https://github.com/WirePact/k8s-pki" \
-#     org.opencontainers.image.documentation="https://github.com/WirePact/k8s-pki/blob/main/README.md" \
-#     org.opencontainers.image.source="https://github.com/WirePact/k8s-pki/blob/main/Dockerfile" \
-#     org.opencontainers.image.version="${BUILD_VERSION}" \
-#     org.opencontainers.image.revision="${COMMIT_SHA}" \
-#     org.opencontainers.image.licenses="Apache-2.0" \
-#     org.opencontainers.image.title="WirePact Kubernetes PKI" \
-#     org.opencontainers.image.description="This is the PKI for WirePact when run in Kubernetes with the Operator. It is responsible to deliver key material to the translators for the communication between services."
+LABEL org.opencontainers.image.authors="cbuehler@rootd.ch" \
+    org.opencontainers.image.url="https://github.com/WirePact/k8s-contract-repository" \
+    org.opencontainers.image.documentation="https://github.com/WirePact/k8s-contract-repository/blob/main/README.md" \
+    org.opencontainers.image.source="https://github.com/WirePact/k8s-contract-repository/blob/main/api/Dockerfile" \
+    org.opencontainers.image.version="${BUILD_VERSION}" \
+    org.opencontainers.image.revision="${COMMIT_SHA}" \
+    org.opencontainers.image.licenses="Apache-2.0" \
+    org.opencontainers.image.title="WirePact Contract Repository API" \
+    org.opencontainers.image.description="API for the WirePact contract repository. Manages contracts between PKIs in WirePact to allow distributed authentication."
 
 WORKDIR /app
 
