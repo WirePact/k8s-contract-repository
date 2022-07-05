@@ -22,7 +22,7 @@ services:
       - PORT=8081
  
   pki_a:
-    image: ghcr.io/wirepact/k8s-pki:2.3.0
+    image: ghcr.io/wirepact/k8s-pki:2.3.1
     environment:
       - DEBUG=true
       - PORT=8082
@@ -32,7 +32,7 @@ services:
       - 8082:8082
  
   pki_b:
-    image: ghcr.io/wirepact/k8s-pki:2.3.0
+    image: ghcr.io/wirepact/k8s-pki:2.3.1
     environment:
       - DEBUG=true
       - PORT=8083
@@ -42,14 +42,14 @@ services:
       - 8083:8083
   
   pki_c:
-    image: ghcr.io/wirepact/k8s-pki:2.3.0
+    image: ghcr.io/wirepact/k8s-pki:2.3.1
     environment:
       - DEBUG=true
       - PORT=8080
       - LOCAL=true
   
   pki_d:
-    image: ghcr.io/wirepact/k8s-pki:2.3.0
+    image: ghcr.io/wirepact/k8s-pki:2.3.1
     environment:
       - DEBUG=true
       - PORT=8080
