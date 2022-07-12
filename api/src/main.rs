@@ -5,9 +5,11 @@ mod utils;
 
 use clap::{ArgEnum, Parser};
 use log::info;
-use tonic::transport::Server;
+use tonic::{service::interceptor, transport::Server};
 
-use crate::{contracts_service::ContractsService, storage::create_storage};
+use crate::{
+    contracts_service::ContractsService, grpc::api_key_interceptor, storage::create_storage,
+};
 
 #[derive(Clone, Debug, ArgEnum)]
 pub(crate) enum StorageAdapter {
@@ -36,6 +38,13 @@ struct Cli {
     /// If set, debug log messages are printed as well.
     #[clap(short, long, env)]
     debug: bool,
+
+    /// Defines the API key that acts as shared secret for the contract API.
+    /// This is used to authenticate the API calls.
+    /// All calls to the API must have the HTTP `Authorization` header set to the value of this key.
+    /// Example: `Authorization: <API_KEY>`.
+    #[clap(long, env)]
+    api_key: String,
 }
 
 #[tokio::main]
@@ -56,9 +65,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Creating and starting server @ {}.", address);
     let storage = create_storage(cli.storage).await?;
-
     Server::builder()
         .accept_http1(true)
+        .layer(interceptor(api_key_interceptor(&cli.api_key)))
         .add_service(tonic_web::enable(ContractsService::grpc_service(storage)))
         .serve_with_shutdown(address.parse()?, signal())
         .await?;

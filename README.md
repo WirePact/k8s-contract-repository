@@ -33,6 +33,7 @@ the contracts.
 
 The API can be configured via environment variables or command line arguments.
 
+- `API_KEY` `--api-key <API_KEY>`: The API key used for authenticating requests against the API (required)
 - `PORT` (`-p | --port <PORT>`): The port on which the API listens for connections (defaults to `8080`)
 - `STORAGE` (`-s | --storage <STORAGE>`): The storage adapter to use (defaults to `local`)
 - `DEBUG` (`-d | --debug`): Enables debug logging (defaults to `false`)
@@ -89,5 +90,6 @@ one is optional and allows proxying the PKI requests.
 
 - `PORT`: The port on which NGINX listens for connections (defaults to `80`)
 - `REPO_HOST`: The hostname of the contract API (above)
+- `REPO_API_KEY`: The API key of the repository, automatically added to API calls
 - `DNS_SERVER`: If configured, allows access via the `http_proxy` (or `https_proxy`) route
   to PKIs that are not publicly accessible

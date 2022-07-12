@@ -7,6 +7,7 @@ services:
     environment:
       - PORT=8080
       - REPO_HOST=http://api:8081
+      - REPO_API_KEY=foobar
     ports:
       - 8080:8080
     links:
@@ -20,6 +21,7 @@ services:
     environment:
       - DEBUG=true
       - PORT=8081
+      - API_KEY=foobar
  
   pki_a:
     image: ghcr.io/wirepact/k8s-pki:2.3.4
