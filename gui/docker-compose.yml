@@ -9,7 +9,7 @@ services:
     ports:
       - 8081:8081
   pki_a:
-    image: ghcr.io/wirepact/k8s-pki:2.3.4
+    image: ghcr.io/wirepact/k8s-pki:2.3.5
     environment:
       - DEBUG=true
       - PORT=8082
@@ -18,7 +18,7 @@ services:
     ports:
       - 8082:8082
   pki_b:
-    image: ghcr.io/wirepact/k8s-pki:2.3.4
+    image: ghcr.io/wirepact/k8s-pki:2.3.5
     environment:
       - DEBUG=true
       - PORT=8083
