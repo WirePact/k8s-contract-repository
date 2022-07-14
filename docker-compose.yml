@@ -24,7 +24,7 @@ services:
       - API_KEY=foobar
  
   pki_a:
-    image: ghcr.io/wirepact/k8s-pki:2.3.5
+    image: ghcr.io/wirepact/k8s-pki:2.3.6
     environment:
       - DEBUG=true
       - PORT=8082
@@ -34,7 +34,7 @@ services:
       - 8082:8082
  
   pki_b:
-    image: ghcr.io/wirepact/k8s-pki:2.3.5
+    image: ghcr.io/wirepact/k8s-pki:2.3.6
     environment:
       - DEBUG=true
       - PORT=8083
@@ -44,14 +44,14 @@ services:
       - 8083:8083
   
   pki_c:
-    image: ghcr.io/wirepact/k8s-pki:2.3.5
+    image: ghcr.io/wirepact/k8s-pki:2.3.6
     environment:
       - DEBUG=true
       - PORT=8080
       - LOCAL=true
   
   pki_d:
-    image: ghcr.io/wirepact/k8s-pki:2.3.5
+    image: ghcr.io/wirepact/k8s-pki:2.3.6
     environment:
       - DEBUG=true
       - PORT=8080
