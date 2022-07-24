@@ -94,5 +94,7 @@ message GetCertificatesRequest {
 message GetCertificatesResponse {
     // PEM encoded certificates (public keys) of all participants
     // that the given public key is involved in.
+    // Note that the certificate of the "requested participant"
+    // is not included.
     repeated bytes certificates = 1;
 }
