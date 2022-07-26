@@ -26,7 +26,5 @@ ENV PORT=80
 
 COPY --from=build /app/gui/dist/* /usr/share/nginx/html/
 COPY ./gui/nginx.conf /etc/nginx/templates/default.conf.template
-COPY ./gui/nginx.sh /nginx.sh
-RUN chmod +x /nginx.sh
-
-CMD [ "/nginx.sh" ]
+COPY ./gui/15-set-dns-server.sh /docker-entrypoint.d/15-set-dns-server.sh
+RUN chmod +x /docker-entrypoint.d/15-set-dns-server.sh
