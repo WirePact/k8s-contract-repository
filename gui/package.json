@@ -27,7 +27,7 @@
     "del-cli": "5.0.0",
     "eslint": "8.21.0",
     "file-loader": "6.2.0",
-    "grpc-tools": "1.11.2",
+    "grpc-tools": "1.12.4",
     "html-webpack-plugin": "5.5.0",
     "lit-analyzer": "2.0.0-pre.2",
     "make-dir-cli": "3.0.0",
