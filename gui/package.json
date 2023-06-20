@@ -14,7 +14,7 @@
     "@lit-labs/motion": "1.0.3",
     "@vaadin/router": "1.7.4",
     "lit": "2.2.8",
-    "long": "5.2.0",
+    "long": "5.2.3",
     "nice-grpc-common": "1.1.0",
     "nice-grpc-web": "1.1.0",
     "protobufjs": "7.0.0",
