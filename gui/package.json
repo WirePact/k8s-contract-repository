@@ -33,7 +33,7 @@
     "make-dir-cli": "3.0.0",
     "mini-css-extract-plugin": "2.6.1",
     "postcss-loader": "7.0.1",
-    "prettier": "2.7.1",
+    "prettier": "2.8.8",
     "style-loader": "3.3.1",
     "terser-webpack-plugin": "5.3.3",
     "ts-loader": "9.3.1",
