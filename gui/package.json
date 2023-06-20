@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@lit-labs/motion": "1.0.3",
-    "@vaadin/router": "1.7.4",
+    "@vaadin/router": "1.7.5",
     "lit": "2.2.8",
     "long": "5.2.0",
     "nice-grpc-common": "1.1.0",
