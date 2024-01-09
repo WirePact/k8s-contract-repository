@@ -29,7 +29,7 @@
     "file-loader": "6.2.0",
     "grpc-tools": "1.11.2",
     "html-webpack-plugin": "5.5.0",
-    "lit-analyzer": "2.0.0-pre.2",
+    "lit-analyzer": "2.0.3",
     "make-dir-cli": "3.0.0",
     "mini-css-extract-plugin": "2.6.1",
     "postcss-loader": "7.0.1",
