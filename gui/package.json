@@ -23,7 +23,7 @@
   "devDependencies": {
     "autoprefixer": "10.4.8",
     "css-loader": "6.7.1",
-    "css-minimizer-webpack-plugin": "4.0.0",
+    "css-minimizer-webpack-plugin": "6.0.0",
     "del-cli": "5.0.0",
     "eslint": "8.21.0",
     "file-loader": "6.2.0",
