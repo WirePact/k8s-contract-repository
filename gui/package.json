@@ -21,7 +21,7 @@
     "tailwindcss": "3.1.7"
   },
   "devDependencies": {
-    "autoprefixer": "10.4.8",
+    "autoprefixer": "10.4.19",
     "css-loader": "6.7.1",
     "css-minimizer-webpack-plugin": "4.0.0",
     "del-cli": "5.0.0",
